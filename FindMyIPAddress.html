@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find My IP Address | Fast and Easy IP Lookup</title>
+    <meta name="description" content="Quickly find your IP address with our simple and user-friendly tool. Discover your public IP, ISP, and location details with just one click.">
+    <meta name="robots" content="index, follow">
+    <!-- done For publish made by saurav -->
+        <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            /* display: flex; */
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        #container {
+           
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s;
+            width: 100%;
+            max-width: 400px;
+            margin: auto;
+            margin-top: 100px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            color: #4caf50;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        input[type="text"] {
+            margin-top: 20px;
+            width: 80%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            text-align: left;
+        }
+
+        #error {
+            color: #ff0000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Find My IP Address</h1>
+        <button onclick="getIPAddress()">Find My IP</button>
+        <input id="ipInput" type="text" value="" placeholder="0.0.0.0" readonly>
+        <div id="result"></div>
+        <div id="error"></div>
+        <button onclick="copyIPAddress()">Copy IP</button>
+        <button onclick="resetFields()">Reset</button>
+    </div>
+
+    <script>
+        function getIPAddress() {
+            const resultElement = document.getElementById("result");
+            const errorElement = document.getElementById("error");
+            const ipInputElement = document.getElementById("ipInput");
+
+            fetch(`https://ipinfo.io/json?token=e2cd4ad340a71e`)
+                .then(response => response.json())
+                .then(data => {
+                    resultElement.innerHTML = `
+                        <table>
+                            <tr>
+                                <th>Attribute</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr>
+                                <td><strong>IP Address:</strong></td>
+                                <td>${data.ip}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>IPv6:</strong></td>
+                                <td>${data.ip.includes(':') ? 'Yes' : 'No'}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ISP:</strong></td>
+                                <td>${data.org}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Services:</strong></td>
+                                <td>${data.hostname}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>City:</strong></td>
+                                <td>${data.city}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Region:</strong></td>
+                                <td>${data.region}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Country:</strong></td>
+                                <td>${data.country}</td>
+                            </tr>
+                        </table>
+                    `;
+                    ipInputElement.value = data.ip;
+                    errorElement.textContent = "";
+                })
+                .catch(error => {
+                    errorElement.textContent = "Error fetching IP Address information";
+                    resultElement.textContent = "";
+                });
+        }
+
+        function copyIPAddress() {
+            const ipInputElement = document.getElementById("ipInput");
+            ipInputElement.select();
+            document.execCommand("copy");
+            alert("IP Address copied to clipboard!");
+        }
+
+        function resetFields() {
+            document.getElementById("ipInput").value = "";
+            document.getElementById("result").innerHTML = "";
+            document.getElementById("error").textContent = "";
+        }
+    </script>
+</body>
+</html>

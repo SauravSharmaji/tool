@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- done -->
+    <title>Image Converter to JPG multiple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        #inputFile {
+            display: none;
+        }
+
+        label {
+            display: block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 20px auto;
+            width: 150px;
+        }
+
+        button {
+            background-color: #2ecc71;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #output {
+            margin-top: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+
+        a {
+            display: block;
+            margin-top: 10px;
+            color: #fff;
+            text-decoration: none;
+            background-color: #e74c3c;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .download-btn {
+            background-color: #3498db;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        @media only screen and (max-width: 600px) {
+            label {
+                width: 100%;
+            }
+        }
+        #userGuide{
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Image Converter</h1>
+        <p>Select multiple PNG images and convert them to JPG. There is no limit to upload.</p>
+        <label for="inputFile">Choose Images</label>
+        <input type="file" accept="image/png" id="inputFile" multiple />
+        <button onclick="convertImages()">Convert to JPG</button>
+        <button onclick="downloadAll()">Download All</button>
+        <div id="output"></div>
+        <div id="userGuide">
+            <h2>How to Use:</h2>
+            <ol>
+                <li>Click on the "Choose Images" button.</li>
+                <li>Select one or more PNG images for conversion. There's no limit to the number of images you can upload.</li>
+                <li>Click the "Convert to JPG" button.</li>
+                <li>View the converted images below the buttons.</li>
+                <li>For each converted image, click the "Download" button to save it as a JPG file.</li>
+                <li>If you want to download all converted images, click the "Download All" button to get a zip file.</li>
+            </ol>
+        </div>
+        
+    </div>
+    
+
+    <script>
+        const convertedImages = [];
+
+        function convertImages() {
+            const inputFile = document.getElementById('inputFile');
+            const outputDiv = document.getElementById('output');
+
+            if (inputFile.files.length === 0) {
+                alert('Please select at least one PNG image.');
+                return;
+            }
+
+            outputDiv.innerHTML = ''; // Clear previous output
+            convertedImages.length = 0; // Clear previous converted images
+
+            Array.from(inputFile.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                        const dataURL = canvas.toDataURL('image/jpeg');
+                        outputDiv.innerHTML += `<div><p>Converted Image:</p><img src="${dataURL}" alt="Converted JPG" />
+                            <a class="download-btn" onclick="downloadImage('${dataURL}')">Download</a></div>`;
+                        convertedImages.push(dataURL);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function downloadImage(dataURL) {
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = 'converted_image.jpg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function downloadAll() {
+            if (convertedImages.length === 0) {
+                alert('No converted images to download.');
+                return;
+            }
+
+            const zip = new JSZip();
+
+            convertedImages.forEach((dataURL, index) => {
+                const fileName = `converted_image_${index + 1}.jpg`;
+                zip.file(fileName, dataURL.split("base64,")[1], { base64: true });
+            });
+
+            zip.generateAsync({ type: 'blob' }).then(blob => {
+                const zipUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = zipUrl;
+                a.download = 'converted_images.zip';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+</body>
+</html>

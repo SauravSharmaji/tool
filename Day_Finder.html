@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day Finder</title>
+  <!-- done -->
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f8f8;
+    }
+
+    #dateFinder {
+      text-align: center;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 30px;
+      width: 300px;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    #result {
+      font-size: 1.2em;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    #dateInput {
+      font-family: Arial, Helvetica, sans-serif;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+
+    #findButton {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+      transition: background-color 0.3s;
+    }
+
+    #findButton:hover {
+      background-color: #45a049;
+    }
+
+    #guide {
+      margin-top: 20px;
+      text-align: left;
+      color: #555;
+    }
+
+    #guide p {
+      margin: 10px 0;
+      font-size: 1em;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="dateFinder">
+  <h1>Day Finder</h1>
+  <input type="date" id="dateInput">
+  <button id="findButton" onclick="findDay()">Find Day</button>
+  <div id="result"></div>
+  <div id="guide">
+    <p><strong>How to Use:</strong></p>
+    <p>1. Select a date using the date input field.</p>
+    <p>2. Click the <strong>Find Day</strong> button.</p>
+    <p>3. The tool will display the corresponding day of the week for the selected date.</p>
+    <p>4. If no date is selected, a message will prompt you to choose a valid date.</p>
+  </div>
+</div>
+
+<script>
+  function findDay() {
+    const inputDate = document.getElementById('dateInput').value;
+
+    if (inputDate) {
+      const date = new Date(inputDate);
+      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const dayOfWeek = daysOfWeek[date.getDay()];
+
+      document.getElementById('result').innerText = `The day for ${inputDate} is ${dayOfWeek}.`;
+    } else {
+      document.getElementById('result').innerText = 'Please select a valid date.';
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A simple date calculator to add or subtract days, months, and years from a given date.">
+    <meta name="keywords" content="date calculator, add days to date, subtract days from date, date manipulation">
+    <meta name="author" content="Saurav Sharma">
+    <meta name="robots" content="index, follow">
+    <title>Date Calculator</title>
+
+    <!-- project completed made by Saurav Sharma -->
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            /* text-align: center; */
+            margin: 50px;
+            display: flex;
+            justify-content: center;
+        }
+        .contanier{
+            margin: 20px 0 20px;
+            width: 500px;
+            border-radius: 7px;
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+            padding: 25px;
+        }
+        h2 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            color: #555;
+        }
+            input[type="date"] {
+        font-family: 'Arial', sans-serif;
+        font-size: 16px;
+        font-weight: normal;
+        color: #333;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 4px;
+    }
+
+        input {
+            font-family: Arial, sans-serif;
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 45%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #error {
+            color: red;
+            margin-bottom: 10px;
+        }
+
+        #guide {
+            margin-top: 20px;
+            color: #555;
+            text-align: left;
+        }
+        #resetdate{
+            background-color: #5062c7;
+            
+        }
+        #resetdate:hover{
+            background-color: #2d3c91;
+        }
+        .btn-group{
+            display: flex;
+            justify-content: space-around;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contanier">
+
+    
+    <h2>Date Calculator</h2>
+
+    <label for="inputDate">Enter a date:</label>
+    <input type="date" id="inputDate" required>
+
+    <label for="addDays">Add or Subtract days:</label>
+    <input type="number" id="addDays">
+
+    <label for="addMonths">Add or Subtract months:</label>
+    <input type="number" id="addMonths">
+
+    <label for="addYears">Add or Subtract years:</label>
+    <input type="number" id="addYears">
+    <div class="btn-group">
+        
+    <button onclick="calculateDate()">Calculate</button>
+    <button onclick="ResetDate()" id="resetdate">Reset</button>
+
+    </div>
+
+
+
+    <div id="error"></div>
+    <div id="result"></div>
+    <div id="guide">
+        <p><strong>Step 1:</strong> Enter a valid date in the "Enter a date" field.</p>
+        <p><strong>Step 2:</strong> Optionally, add the number of days, months, and years you want to add (ex 5) or subtract.(ex -5)</p>
+        <p><strong>Step 3:</strong> Click the "Calculate" button to see the result.</p>
+    </div>
+
+</div>
+    <script>
+        function calculateDate() {
+            // Clear previous results and errors
+            document.getElementById('error').innerHTML = '';
+            document.getElementById('result').innerHTML = '';
+
+            // Get input values
+            const inputDate = document.getElementById('inputDate').value;
+            const addDays = parseInt(document.getElementById('addDays').value) || 0;
+            const addMonths = parseInt(document.getElementById('addMonths').value) || 0;
+            const addYears = parseInt(document.getElementById('addYears').value) || 0;
+
+            // Validate inputDate
+            if (!inputDate) {
+                document.getElementById('error').innerHTML = 'Please enter a valid date.';
+                return;
+            }
+
+            // Perform date calculations
+            const inputDateTime = new Date(inputDate);
+            inputDateTime.setDate(inputDateTime.getDate() + addDays);
+            inputDateTime.setMonth(inputDateTime.getMonth() + addMonths);
+            inputDateTime.setFullYear(inputDateTime.getFullYear() + addYears);
+
+            // Display result
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = `Result: ${inputDateTime.toDateString()}`;
+        }
+        function ResetDate() {
+        // Clear input fields
+        document.getElementById('inputDate').value = '';
+        document.getElementById('addDays').value = '';
+        document.getElementById('addMonths').value = '';
+        document.getElementById('addYears').value = '';
+
+        // Clear result and error messages
+        document.getElementById('error').innerHTML = '';
+        document.getElementById('result').innerHTML = '';
+    }
+    </script>
+</body>
+
+</html>

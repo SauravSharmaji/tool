@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microphone and Webcam Testing Tool - Check Your Audio and Video Devices</title>
+  <meta name="description" content="Test your microphone and webcam with this online tool. Ensure your audio and video devices are working properly. Click to check now!">
+  <meta name="keywords" content="microphone, webcam, testing tool, audio device, video device, microphone test, webcam test">
+<!-- done pub-->
+<style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f8f8;
+    }
+
+    #testingTool {
+      text-align: center;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 30px;
+      width: 400px;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    #microphoneResult, #webcamResult {
+      font-size: 1.1em;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    #webcamFeed {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #recordingButton {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+    }
+
+    #recordingButton:hover {
+      background-color: #45a049;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+
+<div id="testingTool">
+  <h1>Microphone and Webcam Testing Tool</h1>
+  <p>Click the "Test Microphone and Webcam" button below to check the status of your microphone and webcam.</p>
+  <button id="testingButton" onclick="testMicrophoneAndWebcam()">Test Microphone and Webcam</button>
+  <div id="microphoneResult"></div>
+  <div id="webcamResult"></div>
+  <video id="webcamFeed" autoplay muted playsinline></video>
+  <button id="recordingButton" onclick="toggleRecording()">Start Recording</button>
+</div>
+
+<script>
+  let isRecording = false;
+  let mediaRecorder;
+  let recordedChunks = [];
+
+  async function testMicrophoneAndWebcam() {
+    const microphoneResult = document.getElementById('microphoneResult');
+    const webcamResult = document.getElementById('webcamResult');
+    const webcamFeed = document.getElementById('webcamFeed');
+    const recordingButton = document.getElementById('recordingButton');
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+      if (stream.getAudioTracks().length > 0) {
+        microphoneResult.innerHTML = '<strong>Microphone:</strong> Working properly';
+      } else {
+        microphoneResult.innerHTML = '<strong>Microphone:</strong> Not connected';
+      }
+
+      if (stream.getVideoTracks().length > 0) {
+        webcamResult.innerHTML = '<strong>Webcam:</strong> Working properly';
+        webcamFeed.srcObject = stream;
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          window.open(url, '_blank');
+        };
+      } else {
+        webcamResult.innerHTML = '<strong>Webcam:</strong> Not connected';
+        recordingButton.disabled = true;
+      }
+    } catch (error) {
+      console.error('Error testing microphone and webcam:', error);
+      microphoneResult.innerHTML = '<strong>Microphone:</strong> Not connected';
+      webcamResult.innerHTML = '<strong>Webcam:</strong> Not connected';
+      recordingButton.disabled = true;
+    }
+  }
+
+  function toggleRecording() {
+    if (isRecording) {
+      mediaRecorder.stop();
+      document.getElementById('recordingButton').innerText = 'Start Recording';
+    } else {
+      recordedChunks = [];
+      mediaRecorder.start();
+      document.getElementById('recordingButton').innerText = 'Stop Recording';
+    }
+
+    isRecording = !isRecording;
+  }
+</script>
+
+</body>
+</html>

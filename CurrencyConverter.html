@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Currency Converter</title>
+  <!-- done pub-->
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f8f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #converter {
+     /* text-align: center; */
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 30px;
+      width: 400px;
+      opacity: 0;
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: inline-block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    select, input, button {
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 1em;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #result {
+      font-size: 1.2em;
+      color: #333;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="converter">
+  <h1>Currency Converter</h1>
+  <label for="fromCurrency">From:</label>
+  <select id="fromCurrency"></select>
+  <br>
+  <label for="amount">Amount:</label>
+  <input type="number" id="amount" placeholder="Enter amount" />
+  <br>
+  <label for="toCurrency">To:</label>
+  <select id="toCurrency"></select>
+  <br>
+  <button onclick="convertCurrency()">Convert</button>
+  <div id="result"></div>
+  <div class="tooltiptext">
+    <p>How to use:</p>
+    <p>1. Select the source currency.</p>
+    <p>2. Enter the amount to convert.</p>
+    <p>3. Choose the target currency.</p>
+    <p>4. Click the "Convert" button.</p>
+  </div>
+</div>
+
+  <!-- Tooltip content -->
+ 
+
+
+<script>
+  // Populate currency dropdowns with data from ExchangeRate-API
+  async function populateCurrencies() {
+    const currencyDropdowns = document.querySelectorAll('select');
+    
+    try {
+      const response = await fetch('https://open.er-api.com/v6/latest/USD');
+      const data = await response.json();
+
+      const currencies = Object.keys(data.rates);
+
+      currencyDropdowns.forEach((dropdown) => {
+        currencies.forEach((currency) => {
+          const option = document.createElement('option');
+          option.value = currency;
+          option.textContent = currency;
+          dropdown.appendChild(option);
+        });
+      });
+    } catch (error) {
+      console.error('Error fetching currencies:', error);
+    }
+  }
+
+  async function convertCurrency() {
+    const fromCurrency = document.getElementById('fromCurrency').value;
+    const toCurrency = document.getElementById('toCurrency').value;
+    const amount = document.getElementById('amount').value;
+
+    try {
+      const response = await fetch(`https://open.er-api.com/v6/latest/${fromCurrency}`);
+      const data = await response.json();
+
+      if (data.rates[toCurrency]) {
+        const rate = data.rates[toCurrency];
+        const convertedAmount = (amount * rate).toFixed(2);
+
+        document.getElementById('result').innerHTML = `${amount} ${fromCurrency} is ${convertedAmount} ${toCurrency}`;
+      } else {
+        document.getElementById('result').innerHTML = 'Conversion not available for selected currencies';
+      }
+    } catch (error) {
+      console.error('Error converting currency:', error);
+      document.getElementById('result').innerHTML = 'Error converting currency';
+    }
+  }
+
+  // Populate currencies on page load
+  window.onload = populateCurrencies;
+</script>
+
+</body>
+</html>

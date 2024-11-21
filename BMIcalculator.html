@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator</title>
+    <meta name="description" content="Use our free BMI calculator to easily calculate your Body Mass Index and determine if you are underweight, normal weight, overweight, or obese. Get instant results and health advice based on your BMI." />
+    <meta name="keywords" content="BMI calculator, Body Mass Index, health calculator, weight calculator, fitness, health, calculate BMI, BMI results" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Saurav Sharma" />
+    <!-- project complete made by Saurav Sharma -->
+        <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* height: 100vh; */
+
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* text-align: center; */
+            width: 500px;
+            margin: 10px 0 10px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .input-container {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input {
+            font-family: 'Arial', sans-serif;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            width: 50%;
+            margin: 10px;
+        }
+        #reset{
+            background-color: #667BC6;
+        }
+        #reset:hover{
+            background-color: #445fbd;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #bmi-chart,
+        #usage-guide,
+        #tips {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .inp input{
+            border: 2px solid black;
+
+        }
+        .button-group{
+            display:flex;
+            justify-content: space-around;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container inp">
+        <h1>BMI Calculator</h1>
+        
+        <div class="input-container">
+            <label for="weight">Weight (kg):</label>
+            <input type="number" id="weight" placeholder="Enter your weight" required>
+        </div>
+        <div class="input-container">
+            <label for="feet">Height (feet):</label>
+            <input type="number" id="feet" placeholder="Enter feet" required>
+        </div>
+        <div class="input-container">
+            <label for="inches">Height (inches):</label>
+            <input type="number" id="inches" placeholder="Enter inches" required>
+        </div>
+        <div class="button-group">
+        <button onclick="calculateBMI()">Calculate BMI</button>
+        <button onclick="resetValues()" id="reset">Reset</button>
+    </div>
+
+        <div id="result"></div>
+
+        <div id="bmi-chart">
+            <h2>BMI Categories:</h2>
+            <p>Underweight: BMI less than 18.5</p>
+            <p>Normal weight: BMI 18.5 to 24.9</p>
+            <p>Overweight: BMI 25 to 29.9</p>
+            <p>Obese: BMI 30 or greater</p>
+        </div>
+        <div id="bmi-chart">
+            <h2>BMI Categories:</h2>
+            <p class="underweight"><strong>Underweight:</strong> BMI less than 18.5 (Poor)</p>
+            <p class="normal-weight"><strong>Normal weight:</strong> BMI 18.5 to 24.9 (Good - Excellent)</p>
+            <p class="overweight"><strong>Overweight:</strong> BMI 25 to 29.9 (Poor - Need Attention)</p>
+            <p class="obese"><strong>Obese:</strong> BMI 30 or greater (Poor - urgent Need Attention)</p>
+        </div>
+        
+
+        <div id="usage-guide">
+            <h2>How to use:</h2>
+            <p>1. Enter your weight in kilograms.</p>
+            <p>2. Enter your height in feet and inches.</p>
+            <p>3. Click "Calculate BMI" to get your BMI result.</p>
+        </div>
+
+        <div id="tips">
+            <h2>Tips for BMI control:</h2>
+            <p>- Maintain a balanced diet.</p>
+            <p>- Engage in regular physical activity.</p>
+            <p>- Stay hydrated and get enough sleep.</p>
+            <p>- Consult with a healthcare professional for personalized advice.</p>
+        </div>
+    </div>
+
+    <script>
+         function resetValues() {
+      document.getElementById('weight').value = '';
+      document.getElementById('feet').value = '';
+      document.getElementById('inches').value = '';
+      document.getElementById('result').innerHTML = '';
+    }
+        function calculateBMI() {
+            var weight = document.getElementById('weight').value;
+            var feet = document.getElementById('feet').value;
+            var inches = document.getElementById('inches').value;
+
+            if (weight !== '' && feet !== '' && inches !== '') {
+                var heightInMeters = ((parseInt(feet) * 12 + parseInt(inches)) * 0.0254);
+                var bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2);
+                var result = 'Your BMI is: ' + bmi;
+
+                if (bmi < 18.5) {
+                    result += ' (Underweight)';
+                    result += '\nTips: Consider gaining weight through a balanced diet and regular exercise.';
+                } else if (bmi >= 18.5 && bmi < 25) {
+                    result += ' (Normal weight)';
+                    result += '\nCongratulations! Your BMI is in the normal range.';
+                } else if (bmi >= 25 && bmi < 30) {
+                    result += ' (Overweight)';
+                    result += '\nTips: Focus on maintaining a healthy diet and increase physical activity to lose weight.';
+                } else {
+                    result += ' (Obese)';
+                    result += '\nTips: Consult with a healthcare professional for personalized advice on weight management.';
+                }
+
+                document.getElementById('result').innerText = result;
+            } else {
+                alert('Please enter weight, feet, and inches.');
+            }
+        }
+    </script>
+</body>
+</html>

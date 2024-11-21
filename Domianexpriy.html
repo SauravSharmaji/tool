@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain Expiry Checker</title>
+    <!-- done -->
+    <style>
+      body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    /* height: 100vh; */
+    margin: 250px;
+
+}
+
+.container {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Domain Expiry Checker</h1>
+        <div class="input-group">
+            <input type="text" id="domainInput" placeholder="Enter domain name (e.g., example.com)">
+            <button onclick="checkDomainExpiry()">Check Expiry</button>
+        </div>
+        <div id="loader" class="loader" style="display: none;"></div>
+        <div id="result"></div>
+    </div>
+    <script>
+     async function checkDomainExpiry() {
+    const domain = document.getElementById('domainInput').value;
+    const resultDiv = document.getElementById('result');
+    const loader = document.getElementById('loader');
+
+    if (!domain) {
+        resultDiv.innerHTML = 'Please enter a domain name.';
+        return;
+    }
+
+    // Show loader and clear result
+    loader.style.display = 'block';
+    resultDiv.innerHTML = '';
+
+    // Replace 'YOUR_API_KEY' with your actual API key
+    const apiKey = 'at_5D5C21JO6y2r6G6eWDhtcC8zTPznI';
+    const apiUrl = `https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=${apiKey}&domainName=${domain}&outputFormat=JSON`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        if (data.WhoisRecord && data.WhoisRecord.expiresDate) {
+            const expiryDate = new Date(data.WhoisRecord.expiresDate);
+            const formattedDate = expiryDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+            resultDiv.innerHTML = `The domain <strong>${domain}</strong> expires on <strong>${formattedDate}</strong>.`;
+        } else {
+            resultDiv.innerHTML = `Expiry date for <strong>${domain}</strong> not found.`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `Error fetching data for <strong>${domain}</strong>: ${error.message}`;
+    } finally {
+        // Hide loader
+        loader.style.display = 'none';
+    }
+}
+
+
+
+    </script>
+</body>
+</html>

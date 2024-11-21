@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Calculator</title>
+  <meta name="description" content="A simple age calculator to determine age in years, weeks, days, hours, minutes, and seconds.">
+  <meta name="keywords" content="age calculator, calculate age, date of birth, age in years, age in weeks, age in days, age in hours, age in minutes, age in seconds">
+  <meta name="author" content="Saurav Sharma">
+  <meta name="robots" content="index, follow">
+  <!-- project complete made by Saurav Sharma--> 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+
+    #calculator {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    input {
+      width: calc(100% - 16px);
+      padding: 8px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #667BC6;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    #error-message {
+      color: red;
+      margin-top: 10px;
+    }
+    table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #667BC6;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  input[type="date"] {
+      font-family: 'Arial', sans-serif;
+      font-size: 16px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div id="calculator">
+    <h2>Age Calculator</h2>
+    
+    <label for="birthdate">Step 1: Enter Birth Date</label>
+    <input type="date" id="birthdate" required>
+
+    <label for="calculateOn">Step 2: Choose Calculation Date (Defaults to Today)</label>
+    <input type="date" id="calculateOn" required>
+
+    <button onclick="calculateAge()">Step 3: Calculate Age</button>
+
+    <div id="error-message"></div>
+    <div id="result"></div>
+  </div>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', (event) => {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('calculateOn').value = today;
+  });
+    function calculateAge() {
+      var birthdate = document.getElementById('birthdate').value;
+      var calculateOn = document.getElementById('calculateOn').value;
+
+      if (!birthdate || !calculateOn) {
+        displayErrorMessage("Please enter both birth date and calculation date.");
+        return;
+      }
+
+      var birthdateTimestamp = new Date(birthdate).getTime();
+      var calculateOnTimestamp = new Date(calculateOn).getTime();
+
+      if (birthdateTimestamp >= calculateOnTimestamp) {
+        displayErrorMessage("Please enter a valid birth date and calculation date.");
+        return;
+      }
+
+      clearErrorMessage();
+
+      var ageInMilliseconds = calculateOnTimestamp - birthdateTimestamp;
+      var ageInSeconds = ageInMilliseconds / 1000;
+      var ageInMinutes = ageInSeconds / 60;
+      var ageInHours = ageInMinutes / 60;
+      var ageInDays = ageInHours / 24;
+      var ageInWeeks = ageInDays / 7;
+      var ageInYears = ageInDays / 365.25; // accounting for leap years
+
+      displayResult(ageInYears, ageInWeeks, ageInHours, ageInMinutes, ageInSeconds);
+    }
+
+    function displayResult(years, weeks, hours, minutes, seconds) {
+      var resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+    <table>
+      <tr>
+        <th>Measurement</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td>Age in Years:</td>
+        <td>${years.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>Age in Weeks:</td>
+        <td>${weeks.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>Age in Days:</td>
+        <td>${(years * 365.25).toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>Age in Hours:</td>
+        <td>${hours.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>Age in Minutes:</td>
+        <td>${minutes.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>Age in Seconds:</td>
+        <td>${seconds.toFixed(2)}</td>
+      </tr>
+    </table>
+  `;
+    }
+
+    function displayErrorMessage(message) {
+      var errorMessageDiv = document.getElementById('error-message');
+      errorMessageDiv.textContent = message;
+    }
+
+    function clearErrorMessage() {
+      var errorMessageDiv = document.getElementById('error-message');
+      errorMessageDiv.textContent = "";
+    }
+  </script>
+</body>
+</html>
