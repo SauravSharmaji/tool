@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Merger & Compressor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      background: #f7f7f7;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    textarea {
+      width: 95%;
+      height: 150px;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      resize: vertical;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 14px;
+      color: #fff;
+      background: #007bff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .button-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .output-container {
+      margin-top: 15px;
+    }
+    .output {
+      background: #f1f1f1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    #messageDiv {
+      margin-top: 15px;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Code Merger & Compressor</h2>
+    <textarea id="inputCode" placeholder="Paste your code here..."></textarea>
+    <div class="button-container">
+      <button id="compressButton">Compress</button>
+      <button id="copyButton">Copy to Clipboard</button>
+    </div>
+
+    <div id="messageDiv" style="display: none;"></div>
+    <div class="output-container" style="display: none;">
+      <h3>Compressed Code</h3>
+      <div class="output" id="outputCode"></div>
+    </div>
+
+     </div>
+
+  <script>
+    const inputCode = document.getElementById('inputCode');
+    const compressButton = document.getElementById('compressButton');
+    const outputContainer = document.querySelector('.output-container');
+    const outputCode = document.getElementById('outputCode');
+    const copyButton = document.getElementById('copyButton');
+    const messageDiv = document.getElementById('messageDiv');
+
+    // Function to compress code
+    const compressCode = () => {
+      const code = inputCode.value;
+      if (!code.trim()) {
+        alert('Please paste some code to compress!');
+        return;
+      }
+      // Remove extra spaces, tabs, and line breaks
+      const compressed = code.replace(/\s+/g, ' ').trim();
+      outputCode.textContent = compressed;
+      outputContainer.style.display = 'block';
+    };
+
+    // Function to copy compressed code to clipboard and display the full code in messageDiv
+    const copyToClipboard = () => {
+      const code = outputCode.textContent;
+      if (!code.trim()) {
+        messageDiv.textContent = 'Nothing to copy! Compress some code first.';
+        messageDiv.style.color = 'red';
+        messageDiv.style.display = 'block';
+        return;
+      }
+
+      navigator.clipboard.writeText(code).then(() => {
+        messageDiv.textContent = `Compressed code copied to clipboard:`;
+        messageDiv.style.color = 'green';
+        messageDiv.style.display = 'block'; // Show the message div
+      }).catch(err => {
+        messageDiv.textContent = 'Failed to copy: ' + err;
+        messageDiv.style.color = 'red';
+        messageDiv.style.display = 'block'; // Show the error message div
+      });
+    };
+
+    compressButton.addEventListener('click', compressCode);
+    copyButton.addEventListener('click', copyToClipboard);
+  </script>
+</body>
+</html>
