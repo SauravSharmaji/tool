@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Convert your PNG and JPG images to WebP format quickly and easily with our online tool. Supports multiple file uploads with compression control.">
+    <title>Image to WebP Converter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+        }
+
+        input[type="number"] {
+            margin: 10px 0;
+            padding: 8px;
+            font-size: 16px;
+            width: 120px;
+            text-align: center;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #file-names {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #555;
+            text-align: left;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image to WebP Converter</h1>
+        <div class="file-input">
+            <input type="file" id="upload" accept="image/png, image/jpeg" multiple />
+            <div id="file-names">No files selected.</div>
+        </div>
+
+        <label for="compression">Compression Level (0-100):</label>
+        <input type="number" id="compression" min="0" max="100" value="30" />
+        <span id="compression-value">30%</span>
+
+        <button id="convertAndDownloadBtn">Convert & Download</button>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('upload');
+        const compressionInput = document.getElementById('compression');
+        const compressionValue = document.getElementById('compression-value');
+        const statusDiv = document.getElementById('status');
+        const fileNamesDiv = document.getElementById('file-names');
+
+        compressionInput.addEventListener('input', () => {
+            compressionValue.textContent = compressionInput.value + '%';
+        });
+
+        fileInput.addEventListener('change', () => {
+            const files = fileInput.files;
+            if (files.length > 0) {
+                const fileNames = Array.from(files).map(file => file.name).join(', ');
+                fileNamesDiv.textContent = `Selected files: ${fileNames}`;
+            } else {
+                fileNamesDiv.textContent = 'No files selected.';
+            }
+        });
+
+        document.getElementById('convertAndDownloadBtn').addEventListener('click', async () => {
+            const files = fileInput.files;
+            const compressionLevel = compressionInput.value;
+
+            if (files.length === 0) {
+                alert('Please upload at least one image.');
+                return;
+            }
+
+            statusDiv.textContent = 'Converting images...';
+
+            const zip = new JSZip();
+            const firstFileName = files[0].name.replace(/\.(png|jpg|jpeg)$/i, '');
+
+            for (const file of files) {
+                const reader = new FileReader();
+                const img = new Image();
+
+                await new Promise((resolve) => {
+                    reader.onload = (e) => {
+                        img.src = e.target.result;
+                    };
+
+                    reader.readAsDataURL(file);
+
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+
+                        const webpDataUrl = canvas.toDataURL('image/webp', compressionLevel / 100);
+                        const base64Data = webpDataUrl.split(',')[1];
+
+                        zip.file(file.name.replace(/\.(png|jpg|jpeg)$/i, '.webp'), base64Data, { base64: true });
+                        resolve();
+                    };
+                });
+            }
+
+            zip.generateAsync({ type: 'blob' }).then((blob) => {
+                saveAs(blob, `${firstFileName}.zip`);
+                statusDiv.innerHTML = '<p class="success">Conversion completed! Check your downloads folder.</p>';
+            });
+        });
+    </script>
+</body>
+</html>
